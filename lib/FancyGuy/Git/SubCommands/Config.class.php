@@ -45,6 +45,7 @@ class Config extends \FancyGuy\Git\SubCommand {
 	}
 	
 	public function main() {
-		
+		$master_branch = $this->cliPrompt('Input the name for the master branch:', getDefaultBranch('master'));
+		$release_branch = $this->cliPrompt('Input the name for the release branch:', getDefaultBranch('release'));
 	}
 }

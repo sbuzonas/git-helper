@@ -62,6 +62,14 @@ abstract class Command {
 	 * @param string $line
 	 */
 	public static function cliPrintLn($line) {
-		echo $line, PHP_EOL;
+		fwrite(STDOUT, $line . PHP_EOL);
+	}
+	
+	public static function cliPrompt($message, $default = null) {
+		$line = (!empty($default)) ? $message . ' [' . $default . ']: ' : $message . ': ';
+		fwrite(STDOUT, $line);
+		$input_val = fgets(STDIN);
+		$return_val = (!empty($input_val)) ? $input_val : $default;
+		return $return_val;
 	}
 }

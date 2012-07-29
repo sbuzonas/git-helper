@@ -84,3 +84,9 @@ function isRepoClean() {
 	}
 	return false;
 }
+
+function getDefaultBranch($branch) {
+	$branch_global = getGitConfigValue('githelper.branch.' . $branch, 'global');
+	$branch_default = (!empty($branch_global)) ? $branch_global : $branch;
+	return $branch_default;
+}
