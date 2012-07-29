@@ -1,0 +1,17 @@
+#!/usr/bin/php
+<?php
+
+$basedir = dirname(__FILE__) . '/';
+
+require_once $basedir . 'functions.php';
+require_once $basedir . 'lib/FancyGuy/SplAutoloader.class.php';
+
+$loader = new FancyGuy\SplAutoloader($basedir . 'lib');
+
+$loader->register();
+
+$args = $argv;
+
+array_shift($args);
+
+new FancyGuy\Git\Helper($args);
