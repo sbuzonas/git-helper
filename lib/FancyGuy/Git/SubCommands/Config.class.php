@@ -53,6 +53,7 @@ EOT;
 		$master_branch = $this->cliPrompt('Input the name for the master branch', getDefaultBranch('master'));
 		$release_branch = $this->cliPrompt('Input the name for the release branch', getDefaultBranch('release'));
 		$hotfix_prefix = $this->cliPrompt('Input the prefix for hotfix branches', getDefaultBranch('hotfix'));
+		print_r(str_replace("\n", "\\n", $hotfix_prefix));
 		setGitConfigValue('githelper.branch.master', $master_branch);
 		setGitConfigValue('githelper.branch.release', $release_branch);
 		setGitConfigValue('githelper.branch.hotfix', $hotfix_prefix);
