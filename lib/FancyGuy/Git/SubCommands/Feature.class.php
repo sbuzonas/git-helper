@@ -1,6 +1,5 @@
 <?php
-
-/*
+/* 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * 
@@ -31,45 +30,23 @@
  * All rights reserved.
  */
 
-namespace FancyGuy\Git;
+namespace FancyGuy\Git\SubCommands;
 
 /**
- * Description of Command
+ * Git helper extension.
  *
  * @author Steve Buzonas <steve@slbmeh.com>
  */
-abstract class Command {
-	protected $_usage;
-	protected $_helper;
+class Feature extends \FancyGuy\Git\SubCommand {
+	protected $_usage = <<<EOT
+usage text for Feature
+EOT;
 	
-	/**
-	 * Returns the git-helper instance created by the cli
-	 * @return \FancyGuy\Git\Helper
-	 */
-	public function getHelper() {
-		return $this->_helper;
+	public function description() {
+		return "description for Feature";
 	}
 	
-	/**
-	 * Prints out the usage message.
-	 */
-	public function usage() {
-		$this->cliPrintLn($this->_usage);
-	}
-	
-	/**
-	 * Prints a message with a trailing newline character.
-	 * @param string $line
-	 */
-	public static function cliPrintLn($line) {
-		fwrite(STDOUT, $line . PHP_EOL);
-	}
-	
-	public static function cliPrompt($message, $default = null) {
-		$line = (!empty($default)) ? $message . ': [' . $default . '] ' : $message . ': ';
-		fwrite(STDOUT, $line);
-		$input_val = fgets(STDIN);
-		$return_val = (!empty($input_val)) ? $input_val : $default;
-		return $return_val;
+	public function main() {
+		
 	}
 }

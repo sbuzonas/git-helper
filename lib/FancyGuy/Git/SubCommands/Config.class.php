@@ -47,5 +47,15 @@ class Config extends \FancyGuy\Git\SubCommand {
 	public function main() {
 		$master_branch = $this->cliPrompt('Input the name for the master branch', getDefaultBranch('master'));
 		$release_branch = $this->cliPrompt('Input the name for the release branch', getDefaultBranch('release'));
+		$hotfix_prefix = $this->cliPrompt('Input the prefix for hotfix branches', getDefaultBranch('hotfix'));
+		setGitConfigValue('githelper.branch.master', $master_branch);
+		setGitConfigValue('githelper.branch.release', $release_branch);
+		setGitConfigValue('githelper.branch.hotfix', $hotfix_prefix);
+	}
+	
+	public function show() {
+		$this->cliPrintLn('Master branch: ' . getGitConfigValue('githelper.branch.master'));
+		$this->cliPrintLn('Release branch: ' . getGitConfigValue('githelper.branch.release'));
+		$this->cliPrintLn('Hotfix prefix: ' . getGitConfigValue('githelper.branch.hotfix'));
 	}
 }
