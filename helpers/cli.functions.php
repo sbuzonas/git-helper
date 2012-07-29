@@ -35,7 +35,7 @@ function cliExecSingleLine($command, $line) {
 	$output = array();
 	$retval = 0;
 	exec($command, $output, $retval);
-	$line = $line - 1;
+	$line = ($line > 0) ? $line - 1 : count($output) + $line;
 	if (count($output) >= $line) {
 		return $output[$line];
 	}

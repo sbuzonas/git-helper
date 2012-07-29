@@ -1,5 +1,4 @@
 <?php
-
 /* 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -31,56 +30,27 @@
  * All rights reserved.
  */
 
-function getGitConfigValue($property, $scope = "local", $file = "") {
-	$config_switch = "";
-	
-	switch ($scope) {
-		case "global":
-			$config_switch = "--global";
-			break;
-		case "system":
-			$config_switch = "--system";
-			break;
-		case "local":
-			$config_switch = "--local";
-			break;
-		case "custom":
-			$config_switch = "--file " . $file;
-			break;
-		default:
-			throw new InvalidArgumentException();
-	}
-	
-	return cliExecSingleLine('git config --get --' . $scope . ' ' . $property, 1);
-}
+namespace FancyGuy\Git\SubCommands;
 
-function setGitConfigValue($property, $value, $scope = "local", $file = "") {
-	$config_switch = "";
+/**
+ * Git helper extension.
+ *
+ * @author Steve Buzonas <steve@slbmeh.com>
+ */
+class Status extends \FancyGuy\Git\SubCommand {
+	protected $_usage = <<<EOT
+git helper status isclean
+EOT;
 	
-	switch ($scope) {
-		case "global":
-			$config_switch = "--global";
-			break;
-		case "system":
-			$config_switch = "--system";
-			break;
-		case "local":
-			$config_switch = "--local";
-			break;
-		case "custom":
-			$config_switch = "--file " . $file;
-			break;
-		default:
-			throw new InvalidArgumentException();
+	public function description() {
+		return "determines whether or not the repo is clean";
 	}
 	
-	exec('git config --' . $scope . ' ' . $property . ' ' . $value);
-}
-
-function isRepoClean() {
-	$status = cliExecSingleLine('git status', -1);
-	if (strstr($status, 'nothing to commit')) {
-		return true;
+	public function main() {
+		if (isRepoClean()) {
+			$this->cliPrintLn('repo is clean');
+		} else {
+			$this->cliPrintLn('repo is dirty');
+		}
 	}
-	return false;
 }
