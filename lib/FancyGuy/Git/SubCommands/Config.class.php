@@ -40,6 +40,11 @@ namespace FancyGuy\Git\SubCommands;
 class Config extends \FancyGuy\Git\SubCommand {
 	protected $_requiresCleanTree = true;
 	
+	protected $_usage = <<<EOT
+git helper config         configures the helper branches for the repository
+git helper config show    displays the current configuration for the repository
+EOT;
+	
 	public function description() {
 		return "configures the repository to use all functionality of git-helper";
 	}
