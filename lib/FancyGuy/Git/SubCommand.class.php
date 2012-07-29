@@ -40,6 +40,7 @@ namespace FancyGuy\Git;
  */
 abstract class SubCommand extends Command {
 	protected $_usage = "There is no help for this command.";
+	protected $_requiresCleanTree = false;
 	
 	/**
 	 * Create a new subcommand instance.
@@ -54,6 +55,10 @@ abstract class SubCommand extends Command {
 	}
 	
 	public function run() {
+		if ($this->_requiresCleanTree && !isRepoClean()) {
+			$this->cliPrintLn('that action cannot be preformed without a clean working tree');
+			exit(1);
+		}
 		$command = $this->getHelper()->getNextArg();
 		if (empty($command)) {
 			if (is_callable(array($this, 'main'))) {

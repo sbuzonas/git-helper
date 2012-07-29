@@ -38,6 +38,8 @@ namespace FancyGuy\Git\SubCommands;
  * @author Steve Buzonas <steve@slbmeh.com>
  */
 class Config extends \FancyGuy\Git\SubCommand {
+	protected $_requiresCleanTree = true;
+	
 	public function description() {
 		return "configures the repository to use all functionality of git-helper";
 	}
