@@ -65,6 +65,13 @@ abstract class SubCommand extends Command {
 		} else if ("help" == $command) {
 			$command = "usage";
 		}
+		
+		if (!is_callable(array($this, $command))) {
+			$this->cliPrintLn('Unknown argument: ' . $command);
+			$this->usage();
+			exit(1);
+		}
+		
 		call_user_func(array($this, $command));
 		exit(0);
 	}

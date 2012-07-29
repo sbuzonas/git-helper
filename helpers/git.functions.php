@@ -1,6 +1,6 @@
 <?php
 
-/*
+/* 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * 
@@ -31,41 +31,48 @@
  * All rights reserved.
  */
 
-namespace FancyGuy\Git\SubCommands;
-
-/**
- * Description of Whoami
- *
- * @author Steve Buzonas <steve@slbmeh.com>
- */
-class Whoami extends \FancyGuy\Git\SubCommand {
+function getGitConfigValue($property, $scope = "local", $file = "") {
+	$config_switch = "";
 	
-	 public function description() {
-		 return "displays the user name and email settings for the repository";
-	 }
-	 
-	 public function main() {
-		 $num_args = $this->getHelper()->getNumArgs();
-		 
-		 $scope = "global";
-		 
-		 switch($num_args) {
-			 case 1;
-				 $scope = $this->getHelper()->getNextArg();
-			 case 0;
-				 $user = getGitConfigValue('user.name', $scope);
-				 $email = getGitConfigValue('user.email', $scope);
-				 break;
-			 case 2;
-				 $scope = $this->getHelper()->getNextArg();
-				 $file = $this->getHelper()->getNextArg();
-				 $user = getGitConfigValue('user.name', $scope, $file);
-				 $email = getGitConfigValue('user.email', $scope, $file);
-				 break;
-			 default:
-				 $this->usage();
-				 exit(1);
-		 }
-		 $this->cliPrintLn($user . ' <' . $email . '>');
-	 }
+	switch ($scope) {
+		case "global":
+			$config_switch = "--global";
+			break;
+		case "system":
+			$config_switch = "--system";
+			break;
+		case "local":
+			$config_switch = "--local";
+			break;
+		case "custom":
+			$config_switch = "--file " . $file;
+			break;
+		default:
+			throw new InvalidArgumentException();
+	}
+	
+	return cliExecSingleLine('git config --get --' . $scope . ' ' . $property, 1);
+}
+
+function setGitConfigValue($property, $value, $scope = "local", $file = "") {
+	$config_switch = "";
+	
+	switch ($scope) {
+		case "global":
+			$config_switch = "--global";
+			break;
+		case "system":
+			$config_switch = "--system";
+			break;
+		case "local":
+			$config_switch = "--local";
+			break;
+		case "custom":
+			$config_switch = "--file " . $file;
+			break;
+		default:
+			throw new InvalidArgumentException();
+	}
+	
+	exec('git config --' . $scope . ' ' . $property . ' ' . $value);
 }

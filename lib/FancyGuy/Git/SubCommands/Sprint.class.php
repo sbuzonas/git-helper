@@ -61,7 +61,7 @@ EOT;
 			exit(1);
 		}
 		$sprint = $this->getHelper()->getNextArg();
-		exec('git config ' . self::SPRINT_SETTING . ' ' .$sprint);
+		setGitConfigValue(self::SPRINT_SETTING, $sprint);
 		$this->cliPrintLn('Configured repository to use sprint: ' . $sprint);
 	}
 		

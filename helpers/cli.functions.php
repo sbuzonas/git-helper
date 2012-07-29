@@ -1,6 +1,6 @@
 <?php
 
-/*
+/* 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * 
@@ -31,41 +31,20 @@
  * All rights reserved.
  */
 
-namespace FancyGuy\Git\SubCommands;
+function cliExecSingleLine($command, $line) {
+	$output = array();
+	$retval = 0;
+	exec($command, $output, $retval);
+	$line = $line - 1;
+	if (count($output) >= $line) {
+		return $output[$line];
+	}
+	return false;
+}
 
-/**
- * Description of Whoami
- *
- * @author Steve Buzonas <steve@slbmeh.com>
- */
-class Whoami extends \FancyGuy\Git\SubCommand {
-	
-	 public function description() {
-		 return "displays the user name and email settings for the repository";
-	 }
-	 
-	 public function main() {
-		 $num_args = $this->getHelper()->getNumArgs();
-		 
-		 $scope = "global";
-		 
-		 switch($num_args) {
-			 case 1;
-				 $scope = $this->getHelper()->getNextArg();
-			 case 0;
-				 $user = getGitConfigValue('user.name', $scope);
-				 $email = getGitConfigValue('user.email', $scope);
-				 break;
-			 case 2;
-				 $scope = $this->getHelper()->getNextArg();
-				 $file = $this->getHelper()->getNextArg();
-				 $user = getGitConfigValue('user.name', $scope, $file);
-				 $email = getGitConfigValue('user.email', $scope, $file);
-				 break;
-			 default:
-				 $this->usage();
-				 exit(1);
-		 }
-		 $this->cliPrintLn($user . ' <' . $email . '>');
-	 }
+function cliExecCheckReturn($command) {
+	$output = array();
+	$retval = 0;
+	exec($command, $output, $retval);
+	return $retval;
 }

@@ -1,6 +1,5 @@
 <?php
-
-/*
+/* 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * 
@@ -34,38 +33,16 @@
 namespace FancyGuy\Git\SubCommands;
 
 /**
- * Description of Whoami
+ * Git helper extension.
  *
  * @author Steve Buzonas <steve@slbmeh.com>
  */
-class Whoami extends \FancyGuy\Git\SubCommand {
+class Config extends \FancyGuy\Git\SubCommand {
+	public function description() {
+		return "configures the repository to use all functionality of git-helper";
+	}
 	
-	 public function description() {
-		 return "displays the user name and email settings for the repository";
-	 }
-	 
-	 public function main() {
-		 $num_args = $this->getHelper()->getNumArgs();
-		 
-		 $scope = "global";
-		 
-		 switch($num_args) {
-			 case 1;
-				 $scope = $this->getHelper()->getNextArg();
-			 case 0;
-				 $user = getGitConfigValue('user.name', $scope);
-				 $email = getGitConfigValue('user.email', $scope);
-				 break;
-			 case 2;
-				 $scope = $this->getHelper()->getNextArg();
-				 $file = $this->getHelper()->getNextArg();
-				 $user = getGitConfigValue('user.name', $scope, $file);
-				 $email = getGitConfigValue('user.email', $scope, $file);
-				 break;
-			 default:
-				 $this->usage();
-				 exit(1);
-		 }
-		 $this->cliPrintLn($user . ' <' . $email . '>');
-	 }
+	public function main() {
+		
+	}
 }
