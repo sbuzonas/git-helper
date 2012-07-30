@@ -72,13 +72,16 @@ EOT;
 			exit(1);
 		}
 		
-		$branch = $this->getHelper()->getNextArg();
+		$branch = 'feature/' . $this->getHelper()->getNextArg();
 		
 		gitSwitchBranch(getGitConfigValue('githelper.branch.develop'));
 		exec('git pull --rebase');
-		gitSwitchBranch($branch);
-		exec('git merge ' . getGitConfigValue('githelper.branch.develop'));
-		exec('git push');
+		gitSwitchBranch(getGitConfigValue('githelper.branch.develop'));
+		exec('git merge --quiet ' . $branch);
+		// remove our branch so we don't have to deal with rebase quirks in the future.
+		gitDelBranch($branch);
+		// add our branch back for further work until we close the feature.
+		gitAddBranch($branch);
 	}
 	
 	public function close() {
