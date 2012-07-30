@@ -29,6 +29,6 @@ Creates a new branch for feature to be developed.  This is generally based on a 
 
 Publishes the current state of the feature branch to the develop branch.  This is done by first doing a pull --rebase of the develop branch.  The branch is then switched to the develop branch and the changes are merged with --ff-only.  This can be configured to be squashed on merge done by the config subcommand.  If squash is configured the user can opt to prefix the merge message with the feature name in '[]' brackets also done in the config subcommand. The user will be prompted for a commit message if squashed.
 
-###### Close
+##### Close
 
 Closes the feature branch.
