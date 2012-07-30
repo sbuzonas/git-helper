@@ -6,10 +6,10 @@ A simple library and shell script intended to be a set of subcommands for git wr
 
 The branches used are stored in the following git config variables (default values shown).  Setting globals will change the defaults for all repositories.
 
-    githelper.branch.master=master
-    githelper.branch.release=release
-    githelper.branch.hotfix=hotfix
-    githelper.branch.develop=develop
+    githelper.branch.master = master
+    githelper.branch.release = release
+    githelper.branch.hotfix = hotfix
+    githelper.branch.develop = develop
 
 ## SubCommands
 
@@ -32,3 +32,15 @@ Publishes the current state of the feature branch to the develop branch.  This i
 ##### Close
 
 Closes the feature branch.
+
+### Sprint
+
+The sprint subcommand is for agile workflows that track features in development to a specific development cycle to then be merged into a master development branch.  By itself will display the current sprint in use.  Calling 'sprint set' will change the current sprint and update the develop branch accordingly.  The user will be prompted to confirm the switch if features are still in development.
+
+### Status
+
+The status subcommand is a skeleton subcommand that informs the user if the current branch is clean or not.
+
+### Whoami
+
+The whoami subcommand reads the 'user.name' and 'user.email' configuration variables to allow the user to see the identity used by git for the commits.
