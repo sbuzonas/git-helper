@@ -60,8 +60,27 @@ EOT;
 			$this->usage();
 			exit(1);
 		}
+		
+		$branches = getLocalBranches();
+		$feature_branches = array();
+		foreach ($branches as $branch) {
+			$split = explode('/', $branch);
+			if ('feature' == $split[0]) {
+				$feature_branches[] = $split[1];
+			}
+		}
+		
+		if (!empty($feature_branches)) {
+			$continue = $this->cliPrompt('You still have open feature branches.  Continue? ', 'y/N');
+			if ('y' != $continue) {
+				$this->cliPrintLn('Skipping further execution.');
+				exit(0);
+			}
+		}
+		
 		$sprint = $this->getHelper()->getNextArg();
 		setGitConfigValue(self::SPRINT_SETTING, $sprint);
+		setGitConfigValue('githelper.branch.develop', $sprint);
 		$this->cliPrintLn('Configured repository to use sprint: ' . $sprint);
 	}
 		

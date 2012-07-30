@@ -54,7 +54,14 @@ EOT;
 			exit(1);
 		}
 		
-		$branch = $this->getHelper()->getNextArg();
+		$branch = 'feature/' . $this->getHelper()->getNextArg();
+		
+		if (in_array($branch, getAllBranches())) {
+			$this->cliPrintLn('The feature already exists.');
+			exit(1);
+		}
+		
+		gitAddBranch($branch, getGitConfigValue('githelper.branch.develop'));
 	}
 	
 	public function publish() {
@@ -65,7 +72,11 @@ EOT;
 		
 		$branch = $this->getHelper()->getNextArg();
 		
-		
+		gitSwitchBranch(getGitConfigValue('githelper.branch.develop'));
+		exec('git pull --rebase');
+		gitSwitchBranch($branch);
+		exec('git merge ' . getGitConfigValue('githelper.branch.develop'));
+		exec('git push');
 	}
 	
 	public function close() {

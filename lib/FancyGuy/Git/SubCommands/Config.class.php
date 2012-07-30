@@ -69,6 +69,11 @@ EOT;
 		gitSwitchBranch($develop_branch);
 	}
 	
+	public function remote() {
+		$remote = $this->cliPrompt('Input the alias for the remote to work with', 'origin');
+		setGitConfigValue('githelper.remote', $remote);
+	}
+	
 	public function show() {
 		$this->cliPrintLn('Master branch: ' .      getGitConfigValue('githelper.branch.master'));
 		$this->cliPrintLn('Release branch: ' .     getGitConfigValue('githelper.branch.release'));
