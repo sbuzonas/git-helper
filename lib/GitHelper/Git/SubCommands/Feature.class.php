@@ -77,6 +77,11 @@ EOT;
 		$branch = 'feature/' . $feature;
 		
 		gitSwitchBranch($branch);
+		exec('git diff ' . getGitConfigValue('githelper.branch.develop') . '..HEAD --name-only', $changes);
+		if (empty($changes)) {
+			$this->cliPrintLn('nothing to commit');
+			exit(0);
+		}
 		cliExecOrDie('git pull --rebase . ' . getGitConfigValue('githelper.branch.develop'), "Error rebasing from '" . getGitConfigValue('githelper.branch.develop') . "'.");
 		gitSwitchBranch(getGitConfigValue('githelper.branch.develop'));
 		if (1 == getGitConfigValue('githelper.feature.squash')) {
@@ -85,6 +90,7 @@ EOT;
 				$squash_msg = '[' . $feature . '] ' . $squash_msg;
 			}
 			cliExecOrDie('git branch -m ' . $branch . ' githelper/tmp-squash', "Error moving feature branch.");
+			gitSwitchBranch('githelper.branch.develop');
 			gitAddBranch($branch);
 			cliExecOrDie('git merge --quiet --squash -m"' .$squash_msg . '"', "Error squashing feature branch.");
 			gitSwitchBranch(getGitConfigValue('githelper.branch.develop'));
