@@ -50,14 +50,20 @@ EOT;
 	}
 	
 	public function main() {
+		$this->cliPrintLn(' Configure Branches\n====================');
 		$master_branch  = $this->cliPrompt('Input the name for the master branch',      getDefaultBranch('master'));
 		$release_branch = $this->cliPrompt('Input the name for the release branch',     getDefaultBranch('release'));
 		$develop_branch = $this->cliPrompt('Input the name for the development branch', getDefaultBranch('develop'));
 		$hotfix_prefix  = $this->cliPrompt('Input the prefix for hotfix branches',      getDefaultBranch('hotfix'));
+		$this->cliPrintLn(' Miscellaneous\n===============');
+		$squash = $this->cliPrompt('Should published features squash history?', 'Y/n');
+		
+		$squash_val = ('n' == strtolower($squash)) ? 0 : 1;
 		setGitConfigValue('githelper.branch.master',  $master_branch);
 		setGitConfigValue('githelper.branch.release', $release_branch);
 		setGitConfigValue('githelper.branch.develop', $develop_branch);
 		setGitConfigValue('githelper.branch.hotfix',  $hotfix_prefix);
+		setGitConfigValue('githelper.feature.squash', $squash_val);
 		
 		gitAddBranch($master_branch);
 		gitSwitchBranch($develop_branch);

@@ -77,7 +77,12 @@ EOT;
 		gitSwitchBranch($branch);
 		exec('git pull --rebase . ' . getGitConfigValue('githelper.branch.develop'));
 		gitSwitchBranch(getGitConfigValue('githelper.branch.develop'));
-		exec('git merge --ff-only --quiet ' . $branch);
+		if (1 == getGitConfigValue('githelper.feature.squash')) {
+			$squash_msg = $this->cliPrompt('Enter the commit message for the squashed merge');
+			exec('git merge --ff-only --quiet --squash -m"' .$squash_msg . '"');
+		} else {
+			exec('git merge --ff-only --quiet ' . $branch);
+		}
 		// remove our branch so we don't have to deal with rebase quirks in the future.
 		gitDelBranch($branch);
 		// add our branch back for further work until we close the feature.
