@@ -90,3 +90,66 @@ function getDefaultBranch($branch) {
 	$branch_default = (!empty($branch_global)) ? $branch_global : $branch;
 	return $branch_default;
 }
+
+function getLocalBranches() {
+	exec('git branch', $output);
+	
+	$branches = array();
+	
+	foreach ($output as $branch) {
+		$split = explode(' ', $branch);
+		$branches[] = array_pop($split);
+	}
+	
+	return $branches;
+}
+
+function getRemoteBranches() {
+	exec('git branch -r', $output);
+	
+	$branches = array();
+	
+	foreach ($output as $branch) {
+		$split = explode(' ', $branch);
+		$branches[] = array_pop($split);
+	}
+	
+	return $branches;
+}
+
+function getAllBranches() {
+	return array_merge(getLocalBranches(), getRemoteBranches());
+}
+
+function gitAddBranch($branch, $tracks = null) {
+	if (in_array($branch, getAllBranches())) {
+		return false;
+	}
+	
+	if (!empty($tracks) && in_array($tracks, getAllBranches())) {
+		exec('git checkout --track -b ' . $branch . ' ' . $tracks);
+		return true;
+	}
+	
+	exec('git checkout ' . getGitConfigValue('githelper.branch.develop'));
+	exec('git checkout -b ' . $branch);
+	return true;
+}
+
+function gitDelBranch($branch) {
+	$master_branch  = getGitConfigValue('githelper.branch.master');
+	$release_branch = getGitConfigValue('githelper.branch.release');
+	$develop_branch = getGitConfigValue('githelper.branch.develop');
+	$hotfix_branch  = getGitConfigValue('githelper.branch.hotfix');
+	
+	switch ($branch) {
+		case $master_branch:
+		case $release_branch:
+		case $develop_branch:
+		case $hotfix_branch:
+			return false;
+	}
+	
+	exec('git checkout ' . $master_branch);
+	exec('git branch -d ' . $branch);
+}

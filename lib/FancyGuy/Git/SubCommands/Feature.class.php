@@ -38,6 +38,8 @@ namespace FancyGuy\Git\SubCommands;
  * @author Steve Buzonas <steve@slbmeh.com>
  */
 class Feature extends \FancyGuy\Git\SubCommand {
+	protected $_requiresCleanTree = true;
+	
 	protected $_usage = <<<EOT
 usage text for Feature
 EOT;
@@ -46,7 +48,34 @@ EOT;
 		return "description for Feature";
 	}
 	
-	public function main() {
+	public function create() {
+		if ($this->getHelper()->getNumArgs() != 1) {
+			$this->usage();
+			exit(1);
+		}
 		
+		$branch = $this->getHelper()->getNextArg();
+	}
+	
+	public function publish() {
+		if ($this->getHelper()->getNumArgs() != 1) {
+			$this->usage();
+			exit(1);
+		}
+		
+		$branch = $this->getHelper()->getNextArg();
+		
+		
+	}
+	
+	public function close() {
+		if ($this->getHelper()->getNumArgs() != 1) {
+			$this->usage();
+			exit(1);
+		}
+		
+		$branch = $this->getHelper()->getNextArg();
+		
+		exec('git branch -d ' . $branch);
 	}
 }
