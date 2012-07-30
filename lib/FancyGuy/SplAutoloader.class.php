@@ -33,7 +33,7 @@
 
 namespace FancyGuy;
 
-require_once '../GitHelper/Exceptions/ClassNotFoundException.class.php';
+require_once dirname(dirname(__FILE__)) . '/GitHelper/Exceptions/ClassNotFoundException.class.php';
 
 /**
  * Description of SplAutoloader
