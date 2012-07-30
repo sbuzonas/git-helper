@@ -153,3 +153,11 @@ function gitDelBranch($branch) {
 	exec('git checkout ' . $master_branch);
 	exec('git branch -d ' . $branch);
 }
+
+function gitSwitchBranch($branch) {
+	if (in_array($branch, getAllBranches())) {
+		exec('git checkout ' . $branch);
+		return true;
+	}
+	return false;
+}

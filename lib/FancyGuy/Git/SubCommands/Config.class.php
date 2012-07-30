@@ -60,9 +60,13 @@ EOT;
 		setGitConfigValue('githelper.branch.hotfix',  $hotfix_prefix);
 		
 		gitAddBranch($master_branch);
+		gitSwitchBranch($master_branch);
 		gitAddBranch($release_branch);
+		gitSwitchBranch($master_branch);
 		gitAddBranch($develop_branch);
+		gitSwitchBranch($master_branch);
 		gitAddBranch($hotfix_prefix);
+		gitSwitchBranch($master_branch);
 	}
 	
 	public function show() {
