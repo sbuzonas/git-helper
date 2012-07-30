@@ -138,7 +138,7 @@ function gitAddBranch($branch, $tracks = null) {
 	return true;
 }
 
-function gitDelBranch($branch) {
+function gitDelBranch($branch, $force = false) {
 	$master_branch  = getGitConfigValue('githelper.branch.master');
 	$release_branch = getGitConfigValue('githelper.branch.release');
 	$develop_branch = getGitConfigValue('githelper.branch.develop');
@@ -153,7 +153,8 @@ function gitDelBranch($branch) {
 	}
 	
 	exec('git checkout --quiet ' . $master_branch);
-	exec('git branch -d ' . $branch);
+	$delete_flag = ($force) ? '-D' : '-d';
+	exec('git branch ' . $delete_flag . ' ' . $branch);
 }
 
 function gitSwitchBranch($branch) {

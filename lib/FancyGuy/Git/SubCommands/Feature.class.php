@@ -89,7 +89,7 @@ EOT;
 			exec('git merge --ff-only --quiet ' . $branch);
 		}
 		// remove our branch so we don't have to deal with rebase quirks in the future.
-		gitDelBranch($branch);
+		gitDelBranch($branch, true);
 		// add our branch back for further work until we close the feature.
 		gitAddBranch($branch);
 	}
@@ -115,6 +115,6 @@ EOT;
 		
 		gitSwitchBranch(getGitConfigValue('githelper.branch.develop'));
 		
-		exec('git branch -D ' . $branch);
+		gitDelBranch($branch, true);
 	}
 }
