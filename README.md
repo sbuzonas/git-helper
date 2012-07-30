@@ -44,3 +44,31 @@ The status subcommand is a skeleton subcommand that informs the user if the curr
 ### Whoami
 
 The whoami subcommand reads the 'user.name' and 'user.email' configuration variables to allow the user to see the identity used by git for the commits.
+
+## Installation
+
+A basic installation requires obtaining the sources and adding a symlink to the git-helper script somewhere in the user's path.
+
+    git clone git://github.com/slbmeh/git-helper.git
+    ln -s $(pwd)/git-helper/git-helper /usr/bin/
+
+## Hints
+
+I have configured the following global aliases:
+
+    alias.close=helper feature close
+    alias.create=helper feature create
+    alias.publish=helper feature publish
+    alias.sprint=helper sprint
+
+This is a simple configuration that allows me to set my sprint with 'git sprint set sprint-1'.  I can then work on an issue from my bug tracker with 'git create BUG-1234' and publish it to sprint-1 with 'git publish BUG-1234'.  Once the issue is resolved for the feature I can run 'git close BUG-1234'.
+
+## Rationale
+
+Some individuals are adamant against the fast-forward default nature of git.  I personally believe, when working in teams larger than two individuals on anything non-trivial, the central repository should always be fast-forward only.  This prevents rewriting history and losing commits.
+
+Additionally, the commit frequency varies from developer to developer.  It is not necessary to track every single commit.  Often times there are commits reverting changes a few commits back.  'Software development archaeologists' will disagree with my methodologies, however, the master branch should only track what was merged, when it was merged, and why it was merged.
+
+Maintaining a clean history of merges based on simply features and hotfixes will significantly reduce the amount of time required to track down when a bug was introduced.
+
+In a structured agile development process feature branches should be designated for each feature.  Sprint branches should track merges of new features, and master development branches should track sprints and hotfixes being merged in.  The branches should remain until they pass the QA/UX testing required to be placed into production and potentially longer dependant upon the team's ability to pinpoint a bug introduced using SCM history.
