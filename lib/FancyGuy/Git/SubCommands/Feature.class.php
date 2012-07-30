@@ -77,7 +77,7 @@ EOT;
 		gitSwitchBranch($branch);
 		exec('git pull --rebase . ' . getGitConfigValue('githelper.branch.develop'));
 		gitSwitchBranch(getGitConfigValue('githelper.branch.develop'));
-		exec('git merge --ff-only ' . $branch);
+		exec('git merge --ff-only --quiet ' . $branch);
 		// remove our branch so we don't have to deal with rebase quirks in the future.
 		gitDelBranch($branch);
 		// add our branch back for further work until we close the feature.

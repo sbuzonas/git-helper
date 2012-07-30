@@ -153,7 +153,7 @@ function gitDelBranch($branch) {
 	}
 	
 	exec('git checkout --quiet ' . $master_branch);
-	exec('git branch --quiet -d ' . $branch);
+	exec('git branch -d ' . $branch);
 }
 
 function gitSwitchBranch($branch) {
