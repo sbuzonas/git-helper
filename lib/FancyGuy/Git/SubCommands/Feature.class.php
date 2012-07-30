@@ -105,6 +105,6 @@ EOT;
 		
 		gitSwitchBranch(getGitConfigValue('githelper.branch.develop'));
 		
-		exec('git branch -d ' . $branch);
+		exec('git branch -D ' . $branch);
 	}
 }
