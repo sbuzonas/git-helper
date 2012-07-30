@@ -74,10 +74,10 @@ EOT;
 		
 		$branch = 'feature/' . $this->getHelper()->getNextArg();
 		
+		gitSwitchBranch($branch);
+		exec('git pull --rebase ' . getGitConfigValue('githelper.branch.develop'));
 		gitSwitchBranch(getGitConfigValue('githelper.branch.develop'));
-		exec('git pull --rebase');
-		gitSwitchBranch(getGitConfigValue('githelper.branch.develop'));
-		exec('git merge --quiet ' . $branch);
+		exec('git pull --ff-only --quiet ' . $branch);
 		// remove our branch so we don't have to deal with rebase quirks in the future.
 		gitDelBranch($branch);
 		// add our branch back for further work until we close the feature.
