@@ -41,7 +41,9 @@ class Feature extends \FancyGuy\Git\SubCommand {
 	protected $_requiresCleanTree = true;
 	
 	protected $_usage = <<<EOT
-usage text for Feature
+git helper feature create <name>     creates a new feature branch
+git helper feature publish <name>    merges changes with a rebase and pushes to develop branch
+git helper feature close <name>      deletes a feature branch
 EOT;
 	
 	public function description() {
