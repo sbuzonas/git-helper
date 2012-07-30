@@ -65,6 +65,12 @@ This is a simple configuration that allows me to set my sprint with 'git sprint 
 
 ## Rationale
 
+I am a PHP developer, and I have been using git in my workflow and as a deployment tool for a number of years.  I have been using a subset of tools written for Phing (previously Ant) to assist me in my day to day repo interaction.  I also have a subset of tools written as a part of the NetBeans platform.  These two toolsets do a number of very similar actions, and cannot directly interact at the moment.  I decided to port the common aspects of my tools to a pure PHP solution (makes sense being all in PHP when I primarily write PHP).
+
+There are a number of tools that already do what I am trying to achieve, but they are often written in ruby or shell scripts.  Shell scripts don't have the convenience OOP can provide, and ruby isn't a common tool available on a PHP developer's machine.
+
+### Design Decision Prelude
+
 Some individuals are adamant against the fast-forward default nature of git.  I personally believe, when working in teams larger than two individuals on anything non-trivial, the central repository should always be fast-forward only.  This prevents rewriting history and losing commits.
 
 Additionally, the commit frequency varies from developer to developer.  It is not necessary to track every single commit.  Often times there are commits reverting changes a few commits back.  'Software development archaeologists' will disagree with my methodologies, however, the master branch should only track what was merged, when it was merged, and why it was merged.
@@ -72,3 +78,13 @@ Additionally, the commit frequency varies from developer to developer.  It is no
 Maintaining a clean history of merges based on simply features and hotfixes will significantly reduce the amount of time required to track down when a bug was introduced.
 
 In a structured agile development process feature branches should be designated for each feature.  Sprint branches should track merges of new features, and master development branches should track sprints and hotfixes being merged in.  The branches should remain until they pass the QA/UX testing required to be placed into production and potentially longer dependant upon the team's ability to pinpoint a bug introduced using SCM history.
+
+### Design Decision Conclusion
+
+##### git pull --rebase
+
+Based on the previously mentioned views I chose 'git pull --rebase' to merge external history and replay changes on top of it to maintain a linear history of the feature's development without clouding it by external influence.  The branch is deleted and recreated after merging in the changes to prevent conflicts from a previous branch and start with a fresh history for further enhancements/changes.
+
+##### git merge --squash
+
+Squash was chosen to only provide the necessary information to upstream.  That being the current solution, and not necessarily how the developer reached that point.
