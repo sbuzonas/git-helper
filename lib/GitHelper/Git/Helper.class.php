@@ -31,45 +31,73 @@
  * All rights reserved.
  */
 
-namespace FancyGuy\Git;
+namespace GitHelper\Git;
 
 /**
- * Description of Command
+ * Description of Helper
  *
  * @author Steve Buzonas <steve@slbmeh.com>
  */
-abstract class Command {
-	protected $_usage;
-	protected $_helper;
+class Helper extends Command {
+	private $_arguments;
 	
-	/**
-	 * Returns the git-helper instance created by the cli
-	 * @return \FancyGuy\Git\Helper
-	 */
-	public function getHelper() {
-		return $this->_helper;
+	protected $_usage = <<<EOT
+usage: git helper <subcommand>
+	
+Available subcommands are:
+%s
+Try 'git helper <subcommand> help' for more details.
+EOT;
+	
+	public function __construct(Array $args) {
+		if (empty($args)) {
+			$this->usage();
+			exit(1);
+		}
+		$this->_arguments = $args;
+		$subcommand = $this->getNextArg();
+		call_user_func(array($this, $subcommand));
+		exit(0);
 	}
 	
-	/**
-	 * Prints out the usage message.
-	 */
 	public function usage() {
-		$this->cliPrintLn($this->_usage);
+		$modules = getModuleList();
+		
+		$module_list = "";
+		
+		foreach($modules as $module => $description) {
+			$module_list .= "\t" . $module . "\t" . $description . "\n";
+		}
+		
+		$usage_text = sprintf($this->_usage, $module_list);
+		
+		$this->cliPrintLn($usage_text);
 	}
 	
-	/**
-	 * Prints a message with a trailing newline character.
-	 * @param string $line
-	 */
-	public static function cliPrintLn($line) {
-		fwrite(STDOUT, $line . PHP_EOL);
+	public function getNextArg() {
+		return array_shift($this->_arguments);
 	}
 	
-	public static function cliPrompt($message, $default = null) {
-		$line = (!empty($default)) ? $message . ': [' . $default . '] ' : $message . ': ';
-		fwrite(STDOUT, $line);
-		$input_val = rtrim(fgets(STDIN), PHP_EOL); // strip off the EOL character.
-		$return_val = (!empty($input_val)) ? $input_val : $default;
-		return $return_val;
+	public function getNumArgs() {
+		return count($this->_arguments);
 	}
+	
+	public function __call($name, $arguments) {
+		if (("help" == $name) || ("usage" == $name)) {
+			$this->usage();
+			exit(0);
+		}
+		
+		$class_name = '\\GitHelper\\Git\\SubCommands\\' . ucfirst($name);
+		
+		if (class_exists($class_name) && is_callable(array($class_name, 'builder'))) {
+			$subcommand = call_user_func(array($class_name, 'builder'), $this);
+			$subcommand->run();
+			exit(0);
+		}
+		
+		$this->cliPrintLn('Unrecognized command: ' . $name);
+		exit(1);
+	}
+	
 }

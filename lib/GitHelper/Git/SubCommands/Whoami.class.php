@@ -31,73 +31,41 @@
  * All rights reserved.
  */
 
-namespace FancyGuy\Git;
+namespace GitHelper\Git\SubCommands;
 
 /**
- * Description of Helper
+ * Description of Whoami
  *
  * @author Steve Buzonas <steve@slbmeh.com>
  */
-class Helper extends Command {
-	private $_arguments;
+class Whoami extends \GitHelper\Git\SubCommand {
 	
-	protected $_usage = <<<EOT
-usage: git helper <subcommand>
-	
-Available subcommands are:
-%s
-Try 'git helper <subcommand> help' for more details.
-EOT;
-	
-	public function __construct(Array $args) {
-		if (empty($args)) {
-			$this->usage();
-			exit(1);
-		}
-		$this->_arguments = $args;
-		$subcommand = $this->getNextArg();
-		call_user_func(array($this, $subcommand));
-		exit(0);
-	}
-	
-	public function usage() {
-		$modules = getModuleList();
-		
-		$module_list = "";
-		
-		foreach($modules as $module => $description) {
-			$module_list .= "\t" . $module . "\t" . $description . "\n";
-		}
-		
-		$usage_text = sprintf($this->_usage, $module_list);
-		
-		$this->cliPrintLn($usage_text);
-	}
-	
-	public function getNextArg() {
-		return array_shift($this->_arguments);
-	}
-	
-	public function getNumArgs() {
-		return count($this->_arguments);
-	}
-	
-	public function __call($name, $arguments) {
-		if (("help" == $name) || ("usage" == $name)) {
-			$this->usage();
-			exit(0);
-		}
-		
-		$class_name = '\\FancyGuy\\Git\\SubCommands\\' . ucfirst($name);
-		
-		if (class_exists($class_name) && is_callable(array($class_name, 'builder'))) {
-			$subcommand = call_user_func(array($class_name, 'builder'), $this);
-			$subcommand->run();
-			exit(0);
-		}
-		
-		$this->cliPrintLn('Unrecognized command: ' . $name);
-		exit(1);
-	}
-	
+	 public function description() {
+		 return "displays the user name and email settings for the repository";
+	 }
+	 
+	 public function main() {
+		 $num_args = $this->getHelper()->getNumArgs();
+		 
+		 $scope = "global";
+		 
+		 switch($num_args) {
+			 case 1;
+				 $scope = $this->getHelper()->getNextArg();
+			 case 0;
+				 $user = getGitConfigValue('user.name', $scope);
+				 $email = getGitConfigValue('user.email', $scope);
+				 break;
+			 case 2;
+				 $scope = $this->getHelper()->getNextArg();
+				 $file = $this->getHelper()->getNextArg();
+				 $user = getGitConfigValue('user.name', $scope, $file);
+				 $email = getGitConfigValue('user.email', $scope, $file);
+				 break;
+			 default:
+				 $this->usage();
+				 exit(1);
+		 }
+		 $this->cliPrintLn($user . ' <' . $email . '>');
+	 }
 }

@@ -31,41 +31,45 @@
  * All rights reserved.
  */
 
-namespace FancyGuy\Git\SubCommands;
+namespace GitHelper\Git;
 
 /**
- * Description of Whoami
+ * Description of Command
  *
  * @author Steve Buzonas <steve@slbmeh.com>
  */
-class Whoami extends \FancyGuy\Git\SubCommand {
+abstract class Command {
+	protected $_usage;
+	protected $_helper;
 	
-	 public function description() {
-		 return "displays the user name and email settings for the repository";
-	 }
-	 
-	 public function main() {
-		 $num_args = $this->getHelper()->getNumArgs();
-		 
-		 $scope = "global";
-		 
-		 switch($num_args) {
-			 case 1;
-				 $scope = $this->getHelper()->getNextArg();
-			 case 0;
-				 $user = getGitConfigValue('user.name', $scope);
-				 $email = getGitConfigValue('user.email', $scope);
-				 break;
-			 case 2;
-				 $scope = $this->getHelper()->getNextArg();
-				 $file = $this->getHelper()->getNextArg();
-				 $user = getGitConfigValue('user.name', $scope, $file);
-				 $email = getGitConfigValue('user.email', $scope, $file);
-				 break;
-			 default:
-				 $this->usage();
-				 exit(1);
-		 }
-		 $this->cliPrintLn($user . ' <' . $email . '>');
-	 }
+	/**
+	 * Returns the git-helper instance created by the cli
+	 * @return \GitHelper\Git\Helper
+	 */
+	public function getHelper() {
+		return $this->_helper;
+	}
+	
+	/**
+	 * Prints out the usage message.
+	 */
+	public function usage() {
+		$this->cliPrintLn($this->_usage);
+	}
+	
+	/**
+	 * Prints a message with a trailing newline character.
+	 * @param string $line
+	 */
+	public static function cliPrintLn($line) {
+		fwrite(STDOUT, $line . PHP_EOL);
+	}
+	
+	public static function cliPrompt($message, $default = null) {
+		$line = (!empty($default)) ? $message . ': [' . $default . '] ' : $message . ': ';
+		fwrite(STDOUT, $line);
+		$input_val = rtrim(fgets(STDIN), PHP_EOL); // strip off the EOL character.
+		$return_val = (!empty($input_val)) ? $input_val : $default;
+		return $return_val;
+	}
 }

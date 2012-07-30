@@ -1,6 +1,5 @@
 <?php
-
-/*
+/* 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * 
@@ -31,53 +30,27 @@
  * All rights reserved.
  */
 
-namespace FancyGuy\Git;
+namespace GitHelper\Git\SubCommands;
 
 /**
- * Description of SubCommand
+ * Git helper extension.
  *
  * @author Steve Buzonas <steve@slbmeh.com>
  */
-abstract class SubCommand extends Command {
-	protected $_usage = "There is no help for this command.";
-	protected $_requiresCleanTree = false;
+class Status extends \GitHelper\Git\SubCommand {
+	protected $_usage = <<<EOT
+git helper status isclean
+EOT;
 	
-	/**
-	 * Create a new subcommand instance.
-	 * @param \FancyGuy\Git\Helper $helper
-	 */
-	public function __construct(\FancyGuy\Git\Helper $helper) {
-		$this->_helper = $helper;
+	public function description() {
+		return "determines whether or not the repo is clean";
 	}
 	
-	public static function builder(\FancyGuy\Git\Helper $helper) {
-		return new static($helper);
-	}
-	
-	public function run() {
-		if ($this->_requiresCleanTree && !isRepoClean()) {
-			$this->cliPrintLn('that action cannot be preformed without a clean working tree');
-			exit(1);
+	public function main() {
+		if (isRepoClean()) {
+			$this->cliPrintLn('repo is clean');
+		} else {
+			$this->cliPrintLn('repo is dirty');
 		}
-		$command = $this->getHelper()->getNextArg();
-		if (empty($command)) {
-			if (is_callable(array($this, 'main'))) {
-				$command = 'main';
-			} else {
-				$this->usage();
-				exit(1);
-			}
-		} else if ("help" == $command) {
-			$command = "usage";
-		}
-		
-		if (!is_callable(array($this, $command))) {
-			$this->cliPrintLn('Unknown argument: ' . $command);
-			$this->usage();
-			exit(1);
-		}
-		
-		call_user_func(array($this, $command));
-		exit(0);
 	}
 }

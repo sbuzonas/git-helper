@@ -14,4 +14,4 @@ $args = $argv;
 
 array_shift($args);
 
-new FancyGuy\Git\Helper($args);
+new GitHelper\Git\Helper($args);

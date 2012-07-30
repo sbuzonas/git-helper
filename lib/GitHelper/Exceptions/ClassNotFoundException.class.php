@@ -30,7 +30,7 @@
  * All rights reserved.
  */
 
-namespace FancyGuy\Exceptions;
+namespace GitHelper\Exceptions;
 
 /**
  * Standard exception extension.

@@ -30,27 +30,11 @@
  * All rights reserved.
  */
 
-namespace FancyGuy\Git\SubCommands;
+namespace GitHelper\Exceptions;
 
 /**
- * Git helper extension.
+ * Standard exception extension.
  *
  * @author Steve Buzonas <steve@slbmeh.com>
  */
-class Status extends \FancyGuy\Git\SubCommand {
-	protected $_usage = <<<EOT
-git helper status isclean
-EOT;
-	
-	public function description() {
-		return "determines whether or not the repo is clean";
-	}
-	
-	public function main() {
-		if (isRepoClean()) {
-			$this->cliPrintLn('repo is clean');
-		} else {
-			$this->cliPrintLn('repo is dirty');
-		}
-	}
-}
+class InvalidArgumentException extends \Exception{ }

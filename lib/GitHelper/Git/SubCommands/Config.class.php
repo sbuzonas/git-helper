@@ -30,14 +30,14 @@
  * All rights reserved.
  */
 
-namespace FancyGuy\Git\SubCommands;
+namespace GitHelper\Git\SubCommands;
 
 /**
  * Git helper extension.
  *
  * @author Steve Buzonas <steve@slbmeh.com>
  */
-class Config extends \FancyGuy\Git\SubCommand {
+class Config extends \GitHelper\Git\SubCommand {
 	protected $_requiresCleanTree = true;
 	
 	protected $_usage = <<<EOT

@@ -31,57 +31,53 @@
  * All rights reserved.
  */
 
-namespace FancyGuy\Git\SubCommands;
+namespace GitHelper\Git;
 
 /**
- * Description of Sprint
+ * Description of SubCommand
  *
  * @author Steve Buzonas <steve@slbmeh.com>
  */
-final class Sprint extends \FancyGuy\Git\SubCommand {
-	const SPRINT_SETTING = 'githelper.sprint.current';
+abstract class SubCommand extends Command {
+	protected $_usage = "There is no help for this command.";
+	protected $_requiresCleanTree = false;
 	
-	protected $_usage = <<<EOT
-usage:
-\tgit helper sprint\tdisplays the current sprint
-\tgit helper sprint set\tsets the current sprint
-EOT;
-
-	public function description() {
-		return "manipulates the current sprint for the repository";
+	/**
+	 * Create a new subcommand instance.
+	 * @param \GitHelper\Git\Helper $helper
+	 */
+	public function __construct(\GitHelper\Git\Helper $helper) {
+		$this->_helper = $helper;
 	}
 	
-	public function main() {
-		$this->cliPrintLn(getCurrentSprint());
+	public static function builder(\GitHelper\Git\Helper $helper) {
+		return new static($helper);
 	}
 	
-	public function set() {
-		if ($this->getHelper()->getNumArgs() != 1) {
+	public function run() {
+		if ($this->_requiresCleanTree && !isRepoClean()) {
+			$this->cliPrintLn('that action cannot be preformed without a clean working tree');
+			exit(1);
+		}
+		$command = $this->getHelper()->getNextArg();
+		if (empty($command)) {
+			if (is_callable(array($this, 'main'))) {
+				$command = 'main';
+			} else {
+				$this->usage();
+				exit(1);
+			}
+		} else if ("help" == $command) {
+			$command = "usage";
+		}
+		
+		if (!is_callable(array($this, $command))) {
+			$this->cliPrintLn('Unknown argument: ' . $command);
 			$this->usage();
 			exit(1);
 		}
 		
-		$branches = getLocalBranches();
-		$feature_branches = array();
-		foreach ($branches as $branch) {
-			$split = explode('/', $branch);
-			if ('feature' == $split[0]) {
-				$feature_branches[] = $split[1];
-			}
-		}
-		
-		if (!empty($feature_branches)) {
-			$continue = $this->cliPrompt('You still have open feature branches.  Continue? ', 'y/N');
-			if ('y' != $continue) {
-				$this->cliPrintLn('Skipping further execution.');
-				exit(0);
-			}
-		}
-		
-		$sprint = $this->getHelper()->getNextArg();
-		setGitConfigValue(self::SPRINT_SETTING, $sprint);
-		setGitConfigValue('githelper.branch.develop', $sprint);
-		$this->cliPrintLn('Configured repository to use sprint: ' . $sprint);
+		call_user_func(array($this, $command));
+		exit(0);
 	}
-		
 }

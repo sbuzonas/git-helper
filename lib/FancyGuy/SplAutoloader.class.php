@@ -70,13 +70,13 @@ final class SplAutoloader {
 			}
 		}
 		
-		throw new \FancyGuy\Exceptions\ClassNotFoundException('Could not locate class "' . $class . '")');
+		throw new \GitHelper\Exceptions\ClassNotFoundException('Could not locate class "' . $class . '")');
 	}
 	
 	public function autoload($class) {
 		try {
 			$this->loadClass($class);
-		} catch(\FancyGuy\Exceptions\ClassNotFoundException $clsnfe) {
+		} catch(\GitHelper\Exceptions\ClassNotFoundException $clsnfe) {
 			return false;
 		}
 		
