@@ -90,7 +90,20 @@ EOT;
 			exit(1);
 		}
 		
-		$branch = $this->getHelper()->getNextArg();
+		$branch = 'feature/' . $this->getHelper()->getNextArg();
+		
+		gitSwitchBranch($branch);
+		exec('git diff ' . getGitConfigValue('githelper.branch.develop') . '..HEAD --name-only', $changes);
+		
+		if (!empty($changes)) {
+			$continue = $this->cliPrompt('You have unmerged changes on "' . $branch . '".  Continue? ', 'y/N');
+			if ('y' != $continue) {
+				$this->cliPrintLn('Skipping further execution.');
+				exit(0);
+			}
+		}
+		
+		gitSwitchBranch(getGitConfigValue('githelper.branch.develop'));
 		
 		exec('git branch -d ' . $branch);
 	}
