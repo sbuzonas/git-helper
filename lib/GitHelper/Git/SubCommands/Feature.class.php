@@ -62,7 +62,8 @@ EOT;
 			$this->cliPrintLn('The feature already exists.');
 			exit(1);
 		}
-		
+		gitSwitchBranch(getGitConfigValue('githelper.branch.develop'));
+		exec('git pull --rebase');
 		gitAddBranch($branch, getGitConfigValue('githelper.branch.develop'));
 	}
 	
