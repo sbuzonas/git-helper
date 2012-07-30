@@ -152,7 +152,7 @@ function gitDelBranch($branch, $force = false) {
 			return false;
 	}
 	
-	exec('git checkout --quiet ' . $master_branch);
+	exec('git checkout --quiet ' . $develop_branch);
 	$delete_flag = ($force) ? '-D' : '-d';
 	exec('git branch ' . $delete_flag . ' ' . $branch);
 }
