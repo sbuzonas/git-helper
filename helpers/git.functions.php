@@ -131,7 +131,9 @@ function gitAddBranch($branch, $tracks = null) {
 		return true;
 	}
 	
-	exec('git checkout ' . getGitConfigValue('githelper.branch.develop'));
+	if (in_array(getGitConfigValue('githelper.branch.develop'), getAllBranches())) {
+		exec('git checkout ' . getGitConfigValue('githelper.branch.develop'));
+	}
 	exec('git checkout -b ' . $branch);
 	return true;
 }
