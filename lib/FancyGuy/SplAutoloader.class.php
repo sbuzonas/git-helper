@@ -33,7 +33,7 @@
 
 namespace FancyGuy;
 
-require_once 'Exceptions' . DIRECTORY_SEPARATOR . 'ClassNotFoundException.class.php';
+require_once dirname(__FILE__) . '/Exceptions/ClassNotFoundException.class.php';
 
 /**
  * Description of SplAutoloader

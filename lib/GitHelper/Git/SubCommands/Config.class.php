@@ -30,14 +30,14 @@
  * All rights reserved.
  */
 
-namespace FancyGuy\Git\SubCommands;
+namespace GitHelper\Git\SubCommands;
 
 /**
  * Git helper extension.
  *
  * @author Steve Buzonas <steve@slbmeh.com>
  */
-class Config extends \FancyGuy\Git\SubCommand {
+class Config extends \GitHelper\Git\SubCommand {
 	protected $_requiresCleanTree = true;
 	
 	protected $_usage = <<<EOT
@@ -50,14 +50,26 @@ EOT;
 	}
 	
 	public function main() {
+		$this->cliPrintLn(' Configure Branches\n====================');
 		$master_branch  = $this->cliPrompt('Input the name for the master branch',      getDefaultBranch('master'));
 		$release_branch = $this->cliPrompt('Input the name for the release branch',     getDefaultBranch('release'));
 		$develop_branch = $this->cliPrompt('Input the name for the development branch', getDefaultBranch('develop'));
 		$hotfix_prefix  = $this->cliPrompt('Input the prefix for hotfix branches',      getDefaultBranch('hotfix'));
+		$this->cliPrintLn(' Miscellaneous\n===============');
+		$squash = $this->cliPrompt('Should published features squash history?', 'Y/n');
+		$prefix_branches = '';
+		if ('n' != $squash) {
+			$prefix_branches = $this->cliPrompt('Should squash messages be prefixed by the feature name?', 'Y/n');
+		}
+		
+		$squash_val = ('n' == strtolower($squash)) ? 0 : 1;
+		$prefix_val = (empty($prefix_branches) || ('n' == $prefix_branches)) ? 0 : 1;
 		setGitConfigValue('githelper.branch.master',  $master_branch);
 		setGitConfigValue('githelper.branch.release', $release_branch);
 		setGitConfigValue('githelper.branch.develop', $develop_branch);
 		setGitConfigValue('githelper.branch.hotfix',  $hotfix_prefix);
+		setGitConfigValue('githelper.feature.squash', $squash_val);
+		setGitConfigValue('githelper.feature.prefix', $prefix_val);
 		
 		gitAddBranch($master_branch);
 		gitSwitchBranch($develop_branch);
@@ -69,10 +81,15 @@ EOT;
 		gitSwitchBranch($develop_branch);
 	}
 	
+	public function remote() {
+		$remote = $this->cliPrompt('Input the alias for the remote to work with', 'origin');
+		setGitConfigValue('githelper.remote', $remote);
+	}
+	
 	public function show() {
-		$this->cliPrintLn('Master branch: ' .     getGitConfigValue('githelper.branch.master'));
-		$this->cliPrintLn('Release branch: ' .    getGitConfigValue('githelper.branch.release'));
-		$this->cliPrintLn('Development branch: ', getGitConfigValue('githelper.branch.develop'));
-		$this->cliPrintLn('Hotfix prefix: ' .     getGitConfigValue('githelper.branch.hotfix'));
+		$this->cliPrintLn('Master branch: ' .      getGitConfigValue('githelper.branch.master'));
+		$this->cliPrintLn('Release branch: ' .     getGitConfigValue('githelper.branch.release'));
+		$this->cliPrintLn('Development branch: ' . getGitConfigValue('githelper.branch.develop'));
+		$this->cliPrintLn('Hotfix prefix: ' .      getGitConfigValue('githelper.branch.hotfix'));
 	}
 }

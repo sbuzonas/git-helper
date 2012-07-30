@@ -31,41 +31,53 @@
  * All rights reserved.
  */
 
-namespace FancyGuy\Git\SubCommands;
+namespace GitHelper\Git;
 
 /**
- * Description of Whoami
+ * Description of SubCommand
  *
  * @author Steve Buzonas <steve@slbmeh.com>
  */
-class Whoami extends \FancyGuy\Git\SubCommand {
+abstract class SubCommand extends Command {
+	protected $_usage = "There is no help for this command.";
+	protected $_requiresCleanTree = false;
 	
-	 public function description() {
-		 return "displays the user name and email settings for the repository";
-	 }
-	 
-	 public function main() {
-		 $num_args = $this->getHelper()->getNumArgs();
-		 
-		 $scope = "global";
-		 
-		 switch($num_args) {
-			 case 1;
-				 $scope = $this->getHelper()->getNextArg();
-			 case 0;
-				 $user = getGitConfigValue('user.name', $scope);
-				 $email = getGitConfigValue('user.email', $scope);
-				 break;
-			 case 2;
-				 $scope = $this->getHelper()->getNextArg();
-				 $file = $this->getHelper()->getNextArg();
-				 $user = getGitConfigValue('user.name', $scope, $file);
-				 $email = getGitConfigValue('user.email', $scope, $file);
-				 break;
-			 default:
-				 $this->usage();
-				 exit(1);
-		 }
-		 $this->cliPrintLn($user . ' <' . $email . '>');
-	 }
+	/**
+	 * Create a new subcommand instance.
+	 * @param \GitHelper\Git\Helper $helper
+	 */
+	public function __construct(\GitHelper\Git\Helper $helper) {
+		$this->_helper = $helper;
+	}
+	
+	public static function builder(\GitHelper\Git\Helper $helper) {
+		return new static($helper);
+	}
+	
+	public function run() {
+		if ($this->_requiresCleanTree && !isRepoClean()) {
+			$this->cliPrintLn('that action cannot be preformed without a clean working tree');
+			exit(1);
+		}
+		$command = $this->getHelper()->getNextArg();
+		if (empty($command)) {
+			if (is_callable(array($this, 'main'))) {
+				$command = 'main';
+			} else {
+				$this->usage();
+				exit(1);
+			}
+		} else if ("help" == $command) {
+			$command = "usage";
+		}
+		
+		if (!is_callable(array($this, $command))) {
+			$this->cliPrintLn('Unknown argument: ' . $command);
+			$this->usage();
+			exit(1);
+		}
+		
+		call_user_func(array($this, $command));
+		exit(0);
+	}
 }

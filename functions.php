@@ -35,7 +35,7 @@ require_once 'helpers/cli.functions.php';
 require_once 'helpers/git.functions.php';
 
 function getAvailableModules() {
-	$modules = scandir(dirname(__FILE__) . '/lib/FancyGuy/Git/SubCommands');
+	$modules = scandir(dirname(__FILE__) . '/lib/GitHelper/Git/SubCommands');
 	
 	array_shift($modules); // remove '.' from stack
 	array_shift($modules); // remove '..' from stack
@@ -45,7 +45,7 @@ function getAvailableModules() {
 	while(!empty($modules)) {
 		$module = array_shift($modules);
 		$module_name = strtolower(str_replace(\FancyGuy\SplAutoloader::CLASS_FILE_EXT, '', $module));
-		$module_class = '\\FancyGuy\\Git\\SubCommands\\' . ucfirst($module_name);
+		$module_class = '\\GitHelper\\Git\\SubCommands\\' . ucfirst($module_name);
 		
 		if (class_exists($module_class)) {
 			$real_modules[] = $module_name;
@@ -60,7 +60,7 @@ function getModuleList() {
 	
 	$module_list = array();
 	
-	$module_prefix = '\\FancyGuy\\Git\\SubCommands\\';
+	$module_prefix = '\\GitHelper\\Git\\SubCommands\\';
 	
 	foreach($modules as $module) {
 		$module_class = $module_prefix . ucfirst($module);
@@ -73,5 +73,5 @@ function getModuleList() {
 }
 
 function getCurrentSprint() {
-	return cliExecSingleLine('git config --get ' . \FancyGuy\Git\SubCommands\Sprint::SPRINT_SETTING, 1);
+	return cliExecSingleLine('git config --get ' . \GitHelper\Git\SubCommands\Sprint::SPRINT_SETTING, 1);
 }

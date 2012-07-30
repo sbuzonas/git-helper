@@ -1,5 +1,6 @@
 <?php
-/* 
+
+/*
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * 
@@ -30,52 +31,57 @@
  * All rights reserved.
  */
 
-namespace FancyGuy\Git\SubCommands;
+namespace GitHelper\Git\SubCommands;
 
 /**
- * Git helper extension.
+ * Description of Sprint
  *
  * @author Steve Buzonas <steve@slbmeh.com>
  */
-class Feature extends \FancyGuy\Git\SubCommand {
-	protected $_requiresCleanTree = true;
+final class Sprint extends \GitHelper\Git\SubCommand {
+	const SPRINT_SETTING = 'githelper.sprint.current';
 	
 	protected $_usage = <<<EOT
-usage text for Feature
+usage:
+\tgit helper sprint\tdisplays the current sprint
+\tgit helper sprint set\tsets the current sprint
 EOT;
-	
+
 	public function description() {
-		return "description for Feature";
+		return "manipulates the current sprint for the repository";
 	}
 	
-	public function create() {
+	public function main() {
+		$this->cliPrintLn(getCurrentSprint());
+	}
+	
+	public function set() {
 		if ($this->getHelper()->getNumArgs() != 1) {
 			$this->usage();
 			exit(1);
 		}
 		
-		$branch = $this->getHelper()->getNextArg();
-	}
-	
-	public function publish() {
-		if ($this->getHelper()->getNumArgs() != 1) {
-			$this->usage();
-			exit(1);
+		$branches = getLocalBranches();
+		$feature_branches = array();
+		foreach ($branches as $branch) {
+			$split = explode('/', $branch);
+			if ('feature' == $split[0]) {
+				$feature_branches[] = $split[1];
+			}
 		}
 		
-		$branch = $this->getHelper()->getNextArg();
-		
-		
-	}
-	
-	public function close() {
-		if ($this->getHelper()->getNumArgs() != 1) {
-			$this->usage();
-			exit(1);
+		if (!empty($feature_branches)) {
+			$continue = $this->cliPrompt('You still have open feature branches.  Continue? ', 'y/N');
+			if ('y' != $continue) {
+				$this->cliPrintLn('Skipping further execution.');
+				exit(0);
+			}
 		}
 		
-		$branch = $this->getHelper()->getNextArg();
-		
-		exec('git branch -d ' . $branch);
+		$sprint = $this->getHelper()->getNextArg();
+		setGitConfigValue(self::SPRINT_SETTING, $sprint);
+		setGitConfigValue('githelper.branch.develop', $sprint);
+		$this->cliPrintLn('Configured repository to use sprint: ' . $sprint);
 	}
+		
 }

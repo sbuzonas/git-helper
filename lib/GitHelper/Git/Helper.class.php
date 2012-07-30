@@ -31,38 +31,73 @@
  * All rights reserved.
  */
 
-namespace FancyGuy\Git\SubCommands;
+namespace GitHelper\Git;
 
 /**
- * Description of Sprint
+ * Description of Helper
  *
  * @author Steve Buzonas <steve@slbmeh.com>
  */
-final class Sprint extends \FancyGuy\Git\SubCommand {
-	const SPRINT_SETTING = 'githelper.sprint.current';
+class Helper extends Command {
+	private $_arguments;
 	
 	protected $_usage = <<<EOT
-usage:
-\tgit helper sprint\tdisplays the current sprint
-\tgit helper sprint set\tsets the current sprint
+usage: git helper <subcommand>
+	
+Available subcommands are:
+%s
+Try 'git helper <subcommand> help' for more details.
 EOT;
-
-	public function description() {
-		return "manipulates the current sprint for the repository";
-	}
 	
-	public function main() {
-		$this->cliPrintLn(getCurrentSprint());
-	}
-	
-	public function set() {
-		if ($this->getHelper()->getNumArgs() != 1) {
+	public function __construct(Array $args) {
+		if (empty($args)) {
 			$this->usage();
 			exit(1);
 		}
-		$sprint = $this->getHelper()->getNextArg();
-		setGitConfigValue(self::SPRINT_SETTING, $sprint);
-		$this->cliPrintLn('Configured repository to use sprint: ' . $sprint);
+		$this->_arguments = $args;
+		$subcommand = $this->getNextArg();
+		call_user_func(array($this, $subcommand));
+		exit(0);
 	}
+	
+	public function usage() {
+		$modules = getModuleList();
 		
+		$module_list = "";
+		
+		foreach($modules as $module => $description) {
+			$module_list .= "\t" . $module . "\t" . $description . "\n";
+		}
+		
+		$usage_text = sprintf($this->_usage, $module_list);
+		
+		$this->cliPrintLn($usage_text);
+	}
+	
+	public function getNextArg() {
+		return array_shift($this->_arguments);
+	}
+	
+	public function getNumArgs() {
+		return count($this->_arguments);
+	}
+	
+	public function __call($name, $arguments) {
+		if (("help" == $name) || ("usage" == $name)) {
+			$this->usage();
+			exit(0);
+		}
+		
+		$class_name = '\\GitHelper\\Git\\SubCommands\\' . ucfirst($name);
+		
+		if (class_exists($class_name) && is_callable(array($class_name, 'builder'))) {
+			$subcommand = call_user_func(array($class_name, 'builder'), $this);
+			$subcommand->run();
+			exit(0);
+		}
+		
+		$this->cliPrintLn('Unrecognized command: ' . $name);
+		exit(1);
+	}
+	
 }

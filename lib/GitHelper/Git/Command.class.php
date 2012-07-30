@@ -1,5 +1,6 @@
 <?php
-/* 
+
+/*
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * 
@@ -30,11 +31,45 @@
  * All rights reserved.
  */
 
-namespace FancyGuy\Exceptions;
+namespace GitHelper\Git;
 
 /**
- * Standard exception extension.
+ * Description of Command
  *
  * @author Steve Buzonas <steve@slbmeh.com>
  */
-class InvalidArgumentException extends \Exception{ }
+abstract class Command {
+	protected $_usage;
+	protected $_helper;
+	
+	/**
+	 * Returns the git-helper instance created by the cli
+	 * @return \GitHelper\Git\Helper
+	 */
+	public function getHelper() {
+		return $this->_helper;
+	}
+	
+	/**
+	 * Prints out the usage message.
+	 */
+	public function usage() {
+		$this->cliPrintLn($this->_usage);
+	}
+	
+	/**
+	 * Prints a message with a trailing newline character.
+	 * @param string $line
+	 */
+	public static function cliPrintLn($line) {
+		fwrite(STDOUT, $line . PHP_EOL);
+	}
+	
+	public static function cliPrompt($message, $default = null) {
+		$line = (!empty($default)) ? $message . ': [' . $default . '] ' : $message . ': ';
+		fwrite(STDOUT, $line);
+		$input_val = rtrim(fgets(STDIN), PHP_EOL); // strip off the EOL character.
+		$return_val = (!empty($input_val)) ? $input_val : $default;
+		return $return_val;
+	}
+}

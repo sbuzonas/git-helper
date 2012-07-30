@@ -48,3 +48,16 @@ function cliExecCheckReturn($command) {
 	exec($command, $output, $retval);
 	return $retval;
 }
+
+function cliExecOrDie($command, $fail_message = "") {
+	$output = array();
+	$retval = 0;
+	exec($command, $output, $retval);
+	if (0 != $retval) {
+		if (!empty($fail_message)) {
+			GitHelper\Git\Helper::cliPrintLn($fail_message);
+		}
+		exit(1);
+	}
+	return true;
+}
