@@ -70,9 +70,9 @@ EOT;
 	}
 	
 	public function show() {
-		$this->cliPrintLn('Master branch: ' .     getGitConfigValue('githelper.branch.master'));
-		$this->cliPrintLn('Release branch: ' .    getGitConfigValue('githelper.branch.release'));
-		$this->cliPrintLn('Development branch: ', getGitConfigValue('githelper.branch.develop'));
-		$this->cliPrintLn('Hotfix prefix: ' .     getGitConfigValue('githelper.branch.hotfix'));
+		$this->cliPrintLn('Master branch: ' .      getGitConfigValue('githelper.branch.master'));
+		$this->cliPrintLn('Release branch: ' .     getGitConfigValue('githelper.branch.release'));
+		$this->cliPrintLn('Development branch: ' . getGitConfigValue('githelper.branch.develop'));
+		$this->cliPrintLn('Hotfix prefix: ' .      getGitConfigValue('githelper.branch.hotfix'));
 	}
 }
