@@ -86,7 +86,7 @@ EOT;
 			}
 			cliExecOrDie('git branch -m ' . $branch . ' githelper/tmp-squash', "Error moving feature branch.");
 			gitAddBranch($branch);
-			cliExecOrDie('git merge --no-ff --quiet --squash -m"' .$squash_msg . '"', "Error squashing feature branch.");
+			cliExecOrDie('git merge --quiet --squash -m"' .$squash_msg . '"', "Error squashing feature branch.");
 			gitSwitchBranch(getGitConfigValue('githelper.branch.develop'));
 			cliExecOrDie('git merge --ff-only --quiet', "Error merging squashed branch.");
 			gitDelBranch('githelper/tmp-squash');
