@@ -132,7 +132,7 @@ function gitAddBranch($branch, $tracks = null) {
 	}
 	
 	if (in_array(getGitConfigValue('githelper.branch.develop'), getAllBranches())) {
-		exec('git checkout ' . getGitConfigValue('githelper.branch.develop'));
+		exec('git checkout --quiet ' . getGitConfigValue('githelper.branch.develop'));
 	}
 	exec('git checkout -b ' . $branch);
 	return true;
@@ -158,7 +158,7 @@ function gitDelBranch($branch) {
 
 function gitSwitchBranch($branch) {
 	if (in_array($branch, getAllBranches())) {
-		exec('git checkout ' . $branch);
+		exec('git checkout --quiet ' . $branch);
 		return true;
 	}
 	return false;
