@@ -57,13 +57,19 @@ EOT;
 		$hotfix_prefix  = $this->cliPrompt('Input the prefix for hotfix branches',      getDefaultBranch('hotfix'));
 		$this->cliPrintLn(' Miscellaneous\n===============');
 		$squash = $this->cliPrompt('Should published features squash history?', 'Y/n');
+		$prefix_branches = '';
+		if ('n' != $squash) {
+			$prefix_branches = $this->cliPrompt('Should squash messages be prefixed by the feature name?', 'Y/n');
+		}
 		
 		$squash_val = ('n' == strtolower($squash)) ? 0 : 1;
+		$prefix_val = (empty($prefix_branches) || ('n' == $prefix_branches)) ? 0 : 1;
 		setGitConfigValue('githelper.branch.master',  $master_branch);
 		setGitConfigValue('githelper.branch.release', $release_branch);
 		setGitConfigValue('githelper.branch.develop', $develop_branch);
 		setGitConfigValue('githelper.branch.hotfix',  $hotfix_prefix);
 		setGitConfigValue('githelper.feature.squash', $squash_val);
+		setGitConfigValue('githelper.feature.prefix', $prefix_val);
 		
 		gitAddBranch($master_branch);
 		gitSwitchBranch($develop_branch);

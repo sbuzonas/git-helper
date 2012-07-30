@@ -72,13 +72,18 @@ EOT;
 			exit(1);
 		}
 		
-		$branch = 'feature/' . $this->getHelper()->getNextArg();
+		$feature = $this->getHelper()->getNextArg();
+		
+		$branch = 'feature/' . $feature;
 		
 		gitSwitchBranch($branch);
 		exec('git pull --rebase . ' . getGitConfigValue('githelper.branch.develop'));
 		gitSwitchBranch(getGitConfigValue('githelper.branch.develop'));
 		if (1 == getGitConfigValue('githelper.feature.squash')) {
 			$squash_msg = $this->cliPrompt('Enter the commit message for the squashed merge');
+			if (1 == getGitConfigValue('githelper.feature.prefix')) {
+				$squash_msg = '[' . $feature . '] ' . $squash_msg;
+			}
 			exec('git merge --ff-only --quiet --squash -m"' .$squash_msg . '"');
 		} else {
 			exec('git merge --ff-only --quiet ' . $branch);
