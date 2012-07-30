@@ -77,20 +77,21 @@ EOT;
 		$branch = 'feature/' . $feature;
 		
 		gitSwitchBranch($branch);
-		cliExecOrDie('git pull --rebase . ' . getGitConfigValue('githelper.branch.develop'));
+		cliExecOrDie('git pull --rebase . ' . getGitConfigValue('githelper.branch.develop'), "Error rebasing from '" . getGitConfigValue('githelper.branch.develop') . "'.");
 		gitSwitchBranch(getGitConfigValue('githelper.branch.develop'));
 		if (1 == getGitConfigValue('githelper.feature.squash')) {
 			$squash_msg = $this->cliPrompt('Enter the commit message for the squashed merge');
 			if (1 == getGitConfigValue('githelper.feature.prefix')) {
 				$squash_msg = '[' . $feature . '] ' . $squash_msg;
 			}
-			cliExecOrDie('git branch -m ' . $branch . ' githelper/tmp-squash');
+			cliExecOrDie('git branch -m ' . $branch . ' githelper/tmp-squash', "Error moving feature branch.");
 			gitAddBranch($branch);
-			cliExecOrDie('git merge --no-ff --quiet --squash -m"' .$squash_msg . '"');
+			cliExecOrDie('git merge --no-ff --quiet --squash -m"' .$squash_msg . '"', "Error squashing feature branch.");
 			gitSwitchBranch(getGitConfigValue('githelper.branch.develop'));
-			cliExecOrDie('git merge --ff-only --quiet');
+			cliExecOrDie('git merge --ff-only --quiet', "Error merging squashed branch.");
+			gitDelBranch('githelper/tmp-squash');
 		} else {
-			cliExecOrDie('git merge --ff-only --quiet ' . $branch);
+			cliExecOrDie('git merge --ff-only --quiet ' . $branch, "Error merging feature.");
 		}
 		// remove our branch so we don't have to deal with rebase quirks in the future.
 		gitDelBranch($branch, true);
