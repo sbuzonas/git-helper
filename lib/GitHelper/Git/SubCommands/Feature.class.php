@@ -77,16 +77,20 @@ EOT;
 		$branch = 'feature/' . $feature;
 		
 		gitSwitchBranch($branch);
-		exec('git pull --rebase . ' . getGitConfigValue('githelper.branch.develop'));
+		cliExecOrDie('git pull --rebase . ' . getGitConfigValue('githelper.branch.develop'));
 		gitSwitchBranch(getGitConfigValue('githelper.branch.develop'));
 		if (1 == getGitConfigValue('githelper.feature.squash')) {
 			$squash_msg = $this->cliPrompt('Enter the commit message for the squashed merge');
 			if (1 == getGitConfigValue('githelper.feature.prefix')) {
 				$squash_msg = '[' . $feature . '] ' . $squash_msg;
 			}
-			exec('git merge --ff-only --quiet --squash -m"' .$squash_msg . '"');
+			cliExecOrDie('git branch -m ' . $branch . ' githelper/tmp-squash');
+			gitAddBranch($branch);
+			cliExecOrDie('git merge --no-ff --quiet --squash -m"' .$squash_msg . '"');
+			gitSwitchBranch(getGitConfigValue('githelper.branch.develop'));
+			cliExecOrDie('git merge --ff-only --quiet');
 		} else {
-			exec('git merge --ff-only --quiet ' . $branch);
+			cliExecOrDie('git merge --ff-only --quiet ' . $branch);
 		}
 		// remove our branch so we don't have to deal with rebase quirks in the future.
 		gitDelBranch($branch, true);
