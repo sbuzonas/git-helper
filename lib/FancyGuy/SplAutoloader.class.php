@@ -33,7 +33,7 @@
 
 namespace FancyGuy;
 
-require_once dirname(dirname(__FILE__)) . '/GitHelper/Exceptions/ClassNotFoundException.class.php';
+require_once dirname(__FILE__) . '/Exceptions/ClassNotFoundException.class.php';
 
 /**
  * Description of SplAutoloader
@@ -70,13 +70,13 @@ final class SplAutoloader {
 			}
 		}
 		
-		throw new \GitHelper\Exceptions\ClassNotFoundException('Could not locate class "' . $class . '")');
+		throw new \FancyGuy\Exceptions\ClassNotFoundException('Could not locate class "' . $class . '")');
 	}
 	
 	public function autoload($class) {
 		try {
 			$this->loadClass($class);
-		} catch(\GitHelper\Exceptions\ClassNotFoundException $clsnfe) {
+		} catch(\FancyGuy\Exceptions\ClassNotFoundException $clsnfe) {
 			return false;
 		}
 		
